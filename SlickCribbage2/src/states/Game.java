@@ -71,6 +71,7 @@ public class Game extends BasicGameState{
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
 
+		playerScore = 100;
 		playerHand = new Hand(); computerHand = new Hand(); crib = new Hand();
 		cutCard = null; 
 		playerPlayedCards = new ArrayList<Card>(); computerPlayedCards = new ArrayList<Card>(); peggingStack = new ArrayList<Card>();
@@ -272,8 +273,9 @@ public class Game extends BasicGameState{
 			else if (state == 4) countFirstHand();
 			else if (state == 5) countSecondHand();
 			else if (state == 6) countCrib();
-			else if (state == 7) endGame(container.getInput());
+			else if (state == 7) endGame(container.getInput(), game);
 
+			
 
 		}
 		
@@ -357,6 +359,7 @@ public class Game extends BasicGameState{
 			deck.add(cutCard);
 			cutCard = null;
 		}
+		
 	}
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
@@ -654,17 +657,14 @@ public class Game extends BasicGameState{
 			
 			if (canPlay(c)){
 				playerPlayedCards.add(c);
-				peggingStack.add(0, c);
 				playerHand.remove(selections.get(0));
 				
-				count += c.countingVal();
-				int points = determinePeggingPoints();
+				int points = playCard(c);
 				if (points > 0) {
 					window.addMessage("The player scores " + points + "!", false);
 					playerScore(points);
 				}
 
-				card.play();
 				playerWentLast = true;
 				pauseLength = PAUSE_DURATION;
 				selections.clear();
@@ -680,17 +680,14 @@ public class Game extends BasicGameState{
 			Card c = computerHand.getCard(i);
 			if (canPlay(c)){
 				computerPlayedCards.add(c);
-				peggingStack.add(0, c);
 				computerHand.remove(i);
 
-				count += c.countingVal();
-				int points = determinePeggingPoints();
+				int points = playCard(c);
 				if (points > 0){
 					window.addMessage("The computer scores " + points + "!", false);
 					computerScore(points);
 				}
 
-				card.play();
 				playerWentLast = false;
 				pauseLength = PAUSE_DURATION;
 				break;
@@ -831,13 +828,13 @@ public class Game extends BasicGameState{
 		HandResult hr = ai.count(crib, cutCard, true);
 		
 		if (playerDeals){
-			window.addMessage("The player counts his hand: "+ hr.getMessage(), false);
+			window.addMessage("The player counts his crib: "+ hr.getMessage(), false);
 			playerScore(hr.getPoints());
 			transitioningState = true;
 			stats.addPlayerHand(hr);
 		}
 		else{
-			window.addMessage("The computer counts its hand: "+ hr.getMessage(), false);
+			window.addMessage("The computer counts its crib: "+ hr.getMessage(), false);
 			computerScore(hr.getPoints());
 			transitioningState = true;
 			stats.addComputerHand(hr);
@@ -845,10 +842,29 @@ public class Game extends BasicGameState{
 		
 		
 	}
+	
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
-	private void endGame(Input input){
+	private int playCard(Card c){
+		card.play();
+		peggingStack.add(0, c);
+		count += c.countingVal();
 		
+		return determinePeggingPoints();
+
+	}
+
+	//************************************************************************************************************************************************************
+	//************************************************************************************************************************************************************
+	private void endGame(Input input, StateBasedGame game){
+
+		String winner = (playerScore > 120) ? "player" : "computer";
+		window.addMessage("The " + winner + " has won the game! Press enter to exit the game and view the results screen.", false);
+
+		if (input.isKeyPressed(input.KEY_ENTER)){
+			game.enterState(Cribbage.RESULTS_SCREEN_ID);
+		}
+
 	}
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
@@ -856,12 +872,12 @@ public class Game extends BasicGameState{
 		playerScore += s;
 		peg.play();
 	}
-	
+
 	private void computerScore(int s){
 		computerScore += s;
 		peg.play();
 	}
-	
+
 	private boolean isGameOver(){
 		return (playerScore > 120 || computerScore > 120);
 	}
@@ -873,17 +889,17 @@ public class Game extends BasicGameState{
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
 	
-	public void print(String s){
+	private void print(String s){
 		System.out.println(s);
 	}
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
-	public void print(Double d){
+	private void print(Double d){
 		System.out.println(d);
 	}
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
-	public void printHands(){
+	private void printHands(){
 		print("COMPUTER HAND:");
 		for (Card c: computerHand.getCards())
 			print(c.toString());

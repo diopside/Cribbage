@@ -50,11 +50,4 @@ public class Message {
 		return lines;
 	}
 	
-	public static void main(String[] args){
-		Message m = new Message("Click on the community card in order to cut it. After that select two cards to discard");
-		
-		for (String s: m.getLines()){
-			System.out.println(s);
-		}
-	}
 }
