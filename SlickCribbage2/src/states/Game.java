@@ -120,7 +120,7 @@ public class Game extends BasicGameState{
 
 					imageLoc += ".png";
 					Image card = new Image("res/cards/"+imageLoc);
-					cardImages[value-1][suit] = card.getScaledCopy(CARD_WIDTH, CARD_HEIGHT);
+					cardImages[value-1][suit] = card;
 				}
 			}
 		} catch (SlickException exception) {
