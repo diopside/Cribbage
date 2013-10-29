@@ -45,6 +45,7 @@ public class MainMenu extends BasicGameState{
 			newGameBtn.setX(Cribbage.WIDTH/2 - newGameBtn.getImage().getWidth()/2);
 			statisticsBtn.setX(Cribbage.WIDTH/2 - statisticsBtn.getImage().getWidth()/2);
 			quitBtn.setX(Cribbage.WIDTH/2 - quitBtn.getImage().getWidth()/2);
+			optionsBtn.setX(Cribbage.WIDTH/2 - optionsBtn.getImage().getWidth()/2);
 
 		} catch (SlickException exception) {
 			exception.printStackTrace();
@@ -93,6 +94,7 @@ public class MainMenu extends BasicGameState{
 		
 		newGameBtn.render();
 		statisticsBtn.render();
+		optionsBtn.render();
 		quitBtn.render();
 	}
 
@@ -119,6 +121,10 @@ public class MainMenu extends BasicGameState{
 			
 			else if (quitBtn.contains(mouseX, mouseY)){
 				container.exit();
+			}
+			
+			else if (optionsBtn.contains(mouseX, mouseY)){
+				game.enterState(Cribbage.OPTIONS_MENU_ID);
 			}
 		}
 

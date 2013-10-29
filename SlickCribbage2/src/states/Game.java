@@ -40,7 +40,7 @@ public class Game extends BasicGameState{
 	
 	private long enterStateTime;
 	
-	private boolean playerDeals, transitioningState, displayComputerHand, playerWentLast;
+	private boolean playerDeals, transitioningState, displayComputerHand, playerWentLast, gameOver;
 	
 	// Card and hand variables
 	private Hand playerHand, computerHand, crib;
@@ -285,6 +285,8 @@ public class Game extends BasicGameState{
 		if (isGameOver()){
 			state = 7;
 		}
+		
+		input.clearKeyPressedRecord();
 	} // end method update
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
@@ -323,6 +325,7 @@ public class Game extends BasicGameState{
 			muck();
 			shuffle();
 			playerDeals = !playerDeals;
+			stats.updateScores(playerScore, computerScore);
 		}
 
 		
@@ -508,6 +511,7 @@ public class Game extends BasicGameState{
 			transitioningState = true;
 		}
 		
+		
 	}
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
@@ -555,6 +559,7 @@ public class Game extends BasicGameState{
 				if (playerWentLast){ 
 					playerScore(1);
 					window.addMessage("The player scores 1 for go!", false);
+					stats.addPegPoints(1);
 					pauseLength = PAUSE_DURATION;
 
 				}
@@ -573,6 +578,7 @@ public class Game extends BasicGameState{
 				if (playerWentLast){ 
 					playerScore(1);
 					window.addMessage("The player scores 1 for go!", false);
+					stats.addPegPoints(1);
 					pauseLength = PAUSE_DURATION;
 
 				}
@@ -663,6 +669,7 @@ public class Game extends BasicGameState{
 				if (points > 0) {
 					window.addMessage("The player scores " + points + "!", false);
 					playerScore(points);
+					stats.addPegPoints(points);
 				}
 
 				playerWentLast = true;
@@ -797,7 +804,7 @@ public class Game extends BasicGameState{
 	//************************************************************************************************************************************************************
 	private void countComputerHand(){
 		displayComputerHand = true;
-		HandResult hr = ai.count(computerHand, cutCard, false);
+		HandResult hr = ai.count(computerHand, cutCard, false, stats, false);
 		window.addMessage("The computer counts its hand: "+ hr.getMessage(), false);
 		computerScore(hr.getPoints());
 		transitioningState = true;
@@ -812,7 +819,7 @@ public class Game extends BasicGameState{
 	//************************************************************************************************************************************************************
 	
 	private void countPlayerHand(){
-		HandResult hr = ai.count(playerHand, cutCard, false);
+		HandResult hr = ai.count(playerHand, cutCard, false, stats, true);
 		window.addMessage("The player counts his hand: "+ hr.getMessage(), false);
 		playerScore(hr.getPoints());
 		transitioningState = true;
@@ -825,15 +832,17 @@ public class Game extends BasicGameState{
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
 	private void countCrib(){
-		HandResult hr = ai.count(crib, cutCard, true);
+		
 		
 		if (playerDeals){
+			HandResult hr = ai.count(crib, cutCard, true, stats, true);
 			window.addMessage("The player counts his crib: "+ hr.getMessage(), false);
 			playerScore(hr.getPoints());
 			transitioningState = true;
 			stats.addPlayerHand(hr);
 		}
 		else{
+			HandResult hr = ai.count(crib, cutCard, true, stats, false);
 			window.addMessage("The computer counts its crib: "+ hr.getMessage(), false);
 			computerScore(hr.getPoints());
 			transitioningState = true;
@@ -860,10 +869,18 @@ public class Game extends BasicGameState{
 
 		String winner = (playerScore > 120) ? "player" : "computer";
 		window.addMessage("The " + winner + " has won the game! Press enter to exit the game and view the results screen.", false);
+		
+		
+		
+		
 
 		if (input.isKeyPressed(input.KEY_ENTER)){
+			ResultsScreen screen = (ResultsScreen) game.getState(Cribbage.RESULTS_SCREEN_ID);
+			stats.updateScores(playerScore, computerScore);
+			screen.linkStats(stats);
 			game.enterState(Cribbage.RESULTS_SCREEN_ID);
 		}
+		
 
 	}
 	//************************************************************************************************************************************************************

@@ -11,6 +11,9 @@ public class Cribbage extends StateBasedGame {
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = WIDTH * 9 / 16;
 	public static final int MAIN_MENU_ID = 0, GAME_ID = 1, RESULTS_SCREEN_ID = 2, OPTIONS_MENU_ID = 3, STATISTICS_MENU_ID = 4;
+	public static int PLAYER_COLOR, COMPUTER_COLOR, DIFFICULTY, PAUSE_DURATION;
+	public static String BACKGROUND, CARD_BACK;
+	public static boolean SOUND;
 
 	public Cribbage(String name) {
 		super(name);

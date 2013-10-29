@@ -7,7 +7,7 @@ public class Intel {
 
 	
 	
-	public HandResult count(Hand hand, boolean isCrib){
+	public HandResult count(Hand hand, boolean isCrib, Stats stats, boolean isPlayer){
 		HandResult hr = new HandResult();
 		int points = 0;
 		int fifteens = 0;
@@ -91,6 +91,14 @@ public class Intel {
 		 
 		// end runs
 		
+		if (isPlayer){
+			stats.addFifteenPoints(fifteens * 2);
+			stats.addFlushPoints(flushPoints);
+			stats.addNobPoints(nobs);
+			stats.addPairPoints(numPairs * 2);
+			stats.addRunPoints(runPoints);
+		}
+		
 		hr.setPoints(fifteens * 2 + nobs + flushPoints + numPairs * 2 + runPoints * runMult  );
 		hr.setMessage(" Points: "+hr.getPoints()+"    15s-"+ 2* fifteens + "  Nobs-"+nobs+"  Flush-"+flushPoints+"  Pairs-"+ numPairs * 2+ "  Runs-"+runPoints*runMult);
 		
@@ -148,7 +156,7 @@ public class Intel {
 	}
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
-	public HandResult count(Hand hand, Card card, boolean isCrib){
+	public HandResult count(Hand hand, Card card, boolean isCrib, Stats stats, boolean isPlayer){
 		
 		if (hand.size() != 4)
 			return null;
@@ -158,7 +166,7 @@ public class Intel {
 			h.add(c);
 		h.add(card);
 		
-		return count(h, isCrib);
+		return count(h, isCrib, stats, isPlayer);
 		
 	}
 	//************************************************************************************************************************************************************

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Stats {
 
-	private int  playerMostPoints, computerMostPoints, pairPoints, runPoints, nobPoints, fifteenPoints, thirtyOnePoints, flushPoints;
+	private int  playerMostPoints, computerMostPoints, pairPoints, runPoints, nobPoints, fifteenPoints, thirtyOnePoints, flushPoints, pegPoints;
 	
 	private ArrayList<Integer> playerScores;
 	private ArrayList<Integer> computerScores;
@@ -87,6 +87,46 @@ public class Stats {
 
 	public void setComputerMostPoints(int computerMostPoints) {
 		this.computerMostPoints = computerMostPoints;
+	}
+	
+	public void addPegPoints(int a){
+		pegPoints += a;
+	}
+	
+	public void addPairPoints(int a){
+		pairPoints += a;
+	}
+	public void addRunPoints(int a){
+		runPoints += a;
+	}
+	
+	public void addFlushPoints(int a){
+		flushPoints += a;
+	}
+	public void addFifteenPoints(int a){
+		fifteenPoints += a;
+	}
+	
+	public void addNobPoints(int a){
+		nobPoints += a;
+	}
+	public int getPegPoints(){
+		return pegPoints;
+	}
+	public int getRunPoints(){
+		return runPoints;
+	}
+	public int getPairPoints(){
+		return pairPoints;
+	}
+	public int getFlushPoints(){
+		return flushPoints;
+	}
+	public int getFifteenPoints(){
+		return fifteenPoints;
+	}
+	public int getNobPoints(){
+		return nobPoints;
 	}
 	
 	
