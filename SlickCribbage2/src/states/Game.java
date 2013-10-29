@@ -71,7 +71,7 @@ public class Game extends BasicGameState{
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
 
-		playerScore = 100;
+		
 		playerHand = new Hand(); computerHand = new Hand(); crib = new Hand();
 		cutCard = null; 
 		playerPlayedCards = new ArrayList<Card>(); computerPlayedCards = new ArrayList<Card>(); peggingStack = new ArrayList<Card>();
