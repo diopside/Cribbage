@@ -119,6 +119,7 @@ public class Game extends BasicGameState{
 					else		imageLoc += "s";
 
 					imageLoc += ".png";
+					System.out.println(imageLoc+ "\n");
 					Image card = new Image("res/cards/"+imageLoc);
 					cardImages[value-1][suit] = card;
 				}
