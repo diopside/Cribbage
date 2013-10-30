@@ -99,7 +99,7 @@ public class Game extends BasicGameState{
 	
 	private void initImages(){
 		try {
-			background = new Image("res/backgrounds/mm1.png");
+			background = new Image(Cribbage.BACKGROUND);
 			cardBack = new Image("res/cards/back.png");
 			String imageLoc = "";
 			for (int suit = 0; suit < 4; suit ++){
@@ -249,6 +249,9 @@ public class Game extends BasicGameState{
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
 		
+		if (!Cribbage.SOUND){
+			container.setSoundOn(false);
+		}
 		Input input = container.getInput();
 		mouseX = input.getAbsoluteMouseX(); mouseY = input.getAbsoluteMouseY();
 		

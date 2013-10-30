@@ -117,7 +117,7 @@ public class ResultsScreen extends BasicGameState {
 		int y1;
 
 		g.setLineWidth(5);
-		g.setColor(Color.blue);
+		g.setColor(Cribbage.COMPUTER_COLOR);
 
 		for (int i = 1; i < stats.getComputerScores().size(); i ++){
 			x1 = i * xL + graphX;
@@ -132,7 +132,7 @@ public class ResultsScreen extends BasicGameState {
 		x0 = 6 + graphX;
 		y0 = -6 + drawStartY;
 
-		g.setColor(Color.red);
+		g.setColor(Cribbage.PLAYER_COLOR);
 
 		for (int i = 1; i < stats.getPlayerScores().size(); i ++){
 			x1 = i * xL + graphX;
