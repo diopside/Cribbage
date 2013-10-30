@@ -1,10 +1,13 @@
 package entities;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Stack;
 
 public class Intel {
 
 
+	public static final double AVERAGE_POINTS = 4.72;
 	
 	
 	public HandResult count(Hand hand, boolean isCrib, Stats stats, boolean isPlayer){
@@ -205,9 +208,48 @@ public class Intel {
 		
 		return indices;
 	}
-	
-	
-	
-	
-	
+
+	public static void main(String[] args){
+		Hand hand = new Hand();
+		ArrayList<Card> deck = new ArrayList<Card>();
+		HandResult hr = new HandResult();
+		Intel intel = new Intel();
+		
+		for (int s = 0; s < 4; s ++){
+			for (int c = 1; c < 14; c ++){
+				deck.add(new Card(c, s));
+			}
+		}
+		
+
+		for (int i = 1; i < 14; i ++){
+			
+			double points = 0;
+			for (int t = 0; t < 5000; t ++){
+				Collections.shuffle(deck);
+				hand.add(new Card(i, 0));
+				hand.add(new Card(i, 1));
+				hand.add(new Card(deck.get(0).value(), deck.get(0).suit()));
+				hand.add(new Card(deck.get(1).value(), deck.get(1).suit()));
+				hand.add(new Card(deck.get(2).value(), deck.get(2).suit()));
+				
+				System.out.println(hand.toString());
+				
+				hr = intel.count(hand, false, null, false);
+				points += hr.getPoints() /5000.0;
+				
+				hand.getCards().clear();
+			}
+			
+			System.out.println(points);
+			
+			break;
+			
+		}
+
+
+	}
+
+
+
 }

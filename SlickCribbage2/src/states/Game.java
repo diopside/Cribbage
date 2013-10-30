@@ -20,6 +20,7 @@ import entities.Hand;
 import entities.HandResult;
 import entities.Intel;
 import entities.Stats;
+import graphics.Board;
 import graphics.MessageWindow;
 
 public class Game extends BasicGameState{
@@ -29,7 +30,7 @@ public class Game extends BasicGameState{
 	public static final int CARD_WIDTH = 100, CARD_HEIGHT = 140, DECK_X = Cribbage.WIDTH/2 - CARD_WIDTH/2, DECK_Y = Cribbage.HEIGHT/2 - CARD_HEIGHT/2, MARGIN = 25, 
 			PLAYER_HAND_X = MARGIN, PLAYER_HAND_Y = Cribbage.HEIGHT - CARD_HEIGHT - MARGIN, COMPUTER_HAND_X = PLAYER_HAND_X, COMPUTER_HAND_Y = MARGIN,
 			CRIB_X = DECK_X - 150, CRIB_Y = DECK_Y, PLAYER_PEGGING_X = 100, PLAYER_PEGGING_Y = PLAYER_HAND_Y - 175, 
-			COMPUTER_PEGGING_X = PLAYER_PEGGING_X, COMPUTER_PEGGING_Y = COMPUTER_HAND_Y + 175;
+			COMPUTER_PEGGING_X = PLAYER_PEGGING_X, COMPUTER_PEGGING_Y = COMPUTER_HAND_Y + 175, BOARD_X = 630, BOARD_Y = 0;
 	
 	public static int DIFFICULTY, PLAYER_COLOR, COMPUTER_COLOR, PAUSE_DURATION = 500;
 	
@@ -47,6 +48,7 @@ public class Game extends BasicGameState{
 	private Card cutCard;
 	private ArrayList<Card> playerPlayedCards, computerPlayedCards, peggingStack;
 	private Stack<Card> deck;
+	private Board board;
 	
 	private Intel ai; // this will store decision making and card/hand calculating aspects of the game
 	
@@ -71,7 +73,7 @@ public class Game extends BasicGameState{
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
 
-		
+		board = new Board(BOARD_X, BOARD_Y, "res/backgrounds/board1.png");
 		playerHand = new Hand(); computerHand = new Hand(); crib = new Hand();
 		cutCard = null; 
 		playerPlayedCards = new ArrayList<Card>(); computerPlayedCards = new ArrayList<Card>(); peggingStack = new ArrayList<Card>();
@@ -146,6 +148,7 @@ public class Game extends BasicGameState{
 	public void render(GameContainer container, StateBasedGame game,
 			Graphics g) throws SlickException {
 		background.draw();
+		board.render(g);
 		
 		cardBack.draw(DECK_X, DECK_Y);// draw the deck
 		if (cutCard != null)// draw the cutCard
@@ -891,11 +894,13 @@ public class Game extends BasicGameState{
 	//************************************************************************************************************************************************************
 	private void playerScore(int s){
 		playerScore += s;
+		board.updatePlayerScore(playerScore);
 		peg.play();
 	}
 
 	private void computerScore(int s){
 		computerScore += s;
+		board.updateComputerScore(computerScore);
 		peg.play();
 	}
 

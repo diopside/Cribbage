@@ -44,4 +44,12 @@ public class Hand {
 		deck.addAll(cards);
 		cards.clear();
 	}
+	public String toString(){
+		String s = "";
+		for (Card c: cards){
+			s +="-"+c.toString()+"-";
+		}
+		
+		return s;
+	}
 }
