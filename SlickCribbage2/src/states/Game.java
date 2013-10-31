@@ -36,12 +36,12 @@ public class Game extends BasicGameState{
 	
 	
 	private String playerName; // will be read from the options text file
-	private int playerScore, playerPreviousScore, computerScore, computerPreviousScore, wins, losses, state, 
+	private int playerScore, computerScore, state, 
 			pauseLength, mouseX, mouseY, count;
 	
 	private long enterStateTime;
 	
-	private boolean playerDeals, transitioningState, displayComputerHand, playerWentLast, gameOver;
+	private boolean playerDeals, transitioningState, displayComputerHand, playerWentLast, gameOver, escapePressed;
 	
 	// Card and hand variables
 	private Hand playerHand, computerHand, crib;
@@ -261,6 +261,23 @@ public class Game extends BasicGameState{
 		if (pauseLength > 0) // This will add pauses between things like dealing cards or the computer playing a pegging card for instance;
 			pauseLength = (pauseLength > 0) ? pauseLength - delta : 0;
 		
+		else if (escapePressed){
+			window.addMessage("Are you sure you want to end the game?  Press Escape again to leave or enter to resume gameplay", false);
+			if (input.isKeyPressed(input.KEY_ESCAPE)){
+				ResultsScreen screen = (ResultsScreen) game.getState(Cribbage.RESULTS_SCREEN_ID);
+				stats.updateScores(playerScore, computerScore);
+				screen.linkStats(stats);
+				reset();
+				game.enterState(Cribbage.RESULTS_SCREEN_ID);
+			}
+			if (input.isKeyPressed(input.KEY_ENTER)){
+				escapePressed = false;
+				window.addMessage("Resuming gameplay!", false);
+				pauseLength = PAUSE_DURATION;
+			}
+					
+		}
+		
 		else if (transitioningState){
 			//If the state is going from one state or another, it will force a pause exited by hitting enter.  Pause length takes priority before state transitions
 			window.addMessage("Moving to the next phase! Press enter to continue.", false);
@@ -285,6 +302,15 @@ public class Game extends BasicGameState{
 			
 
 		}
+		
+		/*if (input.isKeyPressed(input.KEY_UP))
+			playerScore(10);*/
+		
+		if (input.isKeyPressed(input.KEY_ESCAPE) && !escapePressed){
+			escapePressed = true;
+			pauseLength = PAUSE_DURATION;
+		}
+		
 		
 		window.setCScore(computerScore);
 		window.setPScore(playerScore);
@@ -523,14 +549,11 @@ public class Game extends BasicGameState{
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
 	private void computerDiscard(){
-		int[] indices = ai.getDiscardIndices(computerHand.getCards());
-		Arrays.sort(indices);
-		
-		crib.add(computerHand.getCard(indices[1]));
-		computerHand.remove(indices[1]);
-		
-		crib.add(computerHand.getCard(indices[0]));
-		computerHand.remove(indices[0]);
+		Hand tempHand = new Hand();
+		tempHand.getCards().addAll(computerHand.getCards());
+		ArrayList<Card> discards = ai.determineDiscard(tempHand, !playerDeals);
+		crib.getCards().addAll(discards);
+		computerHand.getCards().removeAll(discards);
 	}
 	//************************************************************************************************************************************************************
 	//************************************************************************************************************************************************************
@@ -685,31 +708,29 @@ public class Game extends BasicGameState{
 			}
 					
 		}
-	
+
 	}
 	//********************************************************************************************************************************************************
 	private void computerPlayCard(){
 
-		for (int i = 0; i < computerHand.size(); i ++){
-			Card c = computerHand.getCard(i);
-			if (canPlay(c)){
-				computerPlayedCards.add(c);
-				computerHand.remove(i);
+		Card c = computerHand.getCard(ai.getPeggingIndex(computerHand, peggingStack, count));
+		if (canPlay(c)){
+			computerPlayedCards.add(c);
+			computerHand.getCards().remove(c);
 
-				int points = playCard(c);
-				if (points > 0){
-					window.addMessage("The computer scores " + points + "!", false);
-					computerScore(points);
-				}
-
-				playerWentLast = false;
-				pauseLength = PAUSE_DURATION;
-				break;
-				
+			int points = playCard(c);
+			if (points > 0){
+				window.addMessage("The computer scores " + points + "!", false);
+				computerScore(points);
 			}
+
+			playerWentLast = false;
+			pauseLength = PAUSE_DURATION;
+
 		}
+
 	}
-	
+
 	//*********************************************************************************************************************************************************
 	private int determinePeggingPoints(){
 		int points = 0;
@@ -877,14 +898,12 @@ public class Game extends BasicGameState{
 		String winner = (playerScore > 120) ? "player" : "computer";
 		window.addMessage("The " + winner + " has won the game! Press enter to exit the game and view the results screen.", false);
 		
-		
-		
-		
-
+	
 		if (input.isKeyPressed(input.KEY_ENTER)){
 			ResultsScreen screen = (ResultsScreen) game.getState(Cribbage.RESULTS_SCREEN_ID);
 			stats.updateScores(playerScore, computerScore);
 			screen.linkStats(stats);
+			reset();
 			game.enterState(Cribbage.RESULTS_SCREEN_ID);
 		}
 		
@@ -934,6 +953,34 @@ public class Game extends BasicGameState{
 			print(c.toString());
 		
 	}
+	
+	public void reset(){
+		
+		board = new Board(BOARD_X, BOARD_Y, "res/backgrounds/board1.png");
+		playerHand = new Hand(); computerHand = new Hand(); crib = new Hand();
+		cutCard = null; 
+		playerPlayedCards = new ArrayList<Card>(); computerPlayedCards = new ArrayList<Card>(); peggingStack = new ArrayList<Card>();
+		deck = new Stack<Card>();
+		selections = new ArrayList<Integer>();
+		window = new MessageWindow(980, 360, "res/windows/messagewindow.png");
+		window.addMessage("Cut the deck to draw a card.  Low card deals in cribbage!", false); // add an inital message
+		stats = new Stats();
+		
+		cribAngles = new int[4];
+		for (int i = 0; i < cribAngles.length; i ++)
+			cribAngles[i] = (int) (Math.random() * 360);
+		
+		playerScore = 0; computerScore = 0; count = 0;
+		playerDeals = false; playerWentLast = false;
+		crib = new Hand();
+		state = 0;
+		
+		createDeck();
+		
+	}
+	
+	
+	
 }
 
 

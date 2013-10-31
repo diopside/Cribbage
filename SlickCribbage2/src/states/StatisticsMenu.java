@@ -9,6 +9,8 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
+import entities.Stats;
+
 public class StatisticsMenu extends BasicGameState{
 	
 	
@@ -16,6 +18,8 @@ public class StatisticsMenu extends BasicGameState{
 	
 	private boolean mainMenuSelected;
 	private Image mainMenu1, mainMenu2;
+	private Image header;
+	private Stats[] stats;
 	
 	
 	public StatisticsMenu(int id){
@@ -25,7 +29,7 @@ public class StatisticsMenu extends BasicGameState{
 
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
-
+		stats = new Stats[0];
 		initImages();
 	}
 	
@@ -33,6 +37,7 @@ public class StatisticsMenu extends BasicGameState{
 		try {
 			mainMenu1 = new Image("res/buttons/mainmenu1.png");
 			mainMenu2 = new Image("res/buttons/mainmenu2.png");
+			header = new Image("res/buttons/statistics/header.png");
 		} catch (SlickException exception) {
 			exception.printStackTrace();
 		}
@@ -42,6 +47,8 @@ public class StatisticsMenu extends BasicGameState{
 	public void render(GameContainer container, StateBasedGame game,
 			Graphics g) throws SlickException {
 		
+		header.draw(Cribbage.WIDTH/2 - header.getWidth()/2, 50);
+		
 		if (mainMenuSelected)
 			mainMenu2.draw(Cribbage.WIDTH/2 - mainMenu1.getWidth()/2 , 600);
 		else
@@ -49,6 +56,11 @@ public class StatisticsMenu extends BasicGameState{
 
 	}
 
+	public void updateStats(Stats s){
+		stats = new Stats[stats.length + 1];
+		stats[stats.length -1] = s;
+		
+	}
 
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {

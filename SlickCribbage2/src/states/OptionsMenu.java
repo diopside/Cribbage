@@ -36,6 +36,9 @@ public class OptionsMenu extends BasicGameState{
 		initImages();
 		initSound();
 		
+		cColorVal = 2;
+		
+		
 		pColorBox = new Rectangle(PCOLOR_X, PCOLOR_Y, 240, 160);
 		cColorBox = new Rectangle(CCOLOR_X, CCOLOR_Y, 240, 160);
 		soundBox = new Rectangle(SOUND_X, SOUND_Y, 240, 160);

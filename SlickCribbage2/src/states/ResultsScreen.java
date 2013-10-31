@@ -76,7 +76,7 @@ public class ResultsScreen extends BasicGameState {
 		mainMenuSelected = r.contains(mouseX, mouseY);
 		
 		if (mainMenuSelected && input.isMousePressed(input.MOUSE_LEFT_BUTTON))
-			game.enterState(Cribbage.MAIN_MENU_ID);
+			exit(game);
 
 	}
 	public int getID() {
@@ -176,6 +176,11 @@ public class ResultsScreen extends BasicGameState {
 		g.drawString("Hand points from Nobs: " + stats.getNobPoints(), 80, 450);
 	}
 	
+	public void exit(StateBasedGame g){
+		StatisticsMenu sM = (StatisticsMenu) g.getState(Cribbage.STATISTICS_MENU_ID);
+		sM.updateStats(stats);
+		g.enterState(Cribbage.MAIN_MENU_ID);
+	}
 	
 	
 	
