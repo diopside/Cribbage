@@ -101,7 +101,7 @@ public class Intel {
 			stats.addFlushPoints(flushPoints);
 			stats.addNobPoints(nobs);
 			stats.addPairPoints(numPairs * 2);
-			stats.addRunPoints(runPoints);
+			stats.addRunPoints(runPoints * runMult);
 		}
 		
 		hr.setPoints(fifteens * 2 + nobs + flushPoints + numPairs * 2 + runPoints * runMult  );
@@ -361,13 +361,7 @@ public class Intel {
 				playableHand.add(c);
 		}
 		
-		
-		
 		int[] values = getValueArray(playableHand.getCards());
-		int index = -1;
-		
-		
-		
 		
 		if (count == 0){ // if the round of pegging is fresh it brings a special set of circumstances regarding the card to play
 			return getCardToLeadIndex(playableHand.getCards());
@@ -393,14 +387,14 @@ public class Intel {
 			return getDefensiveIndex(count, playableHand, peggingStack);
 		}
 			
-		else{ // if all else fails find some index of a playable card
+		 // if all else fails find some index of a playable card
 			for (int i = 0; i < playableHand.getCards().size(); i ++){
 				if (playableHand.getCard(i).value() + count <= 31)
 					return i;
 			}
-		}
+		
 			
-		return -1;
+		return 0;
 		
 	}//**********************************************************************************************************************
 	
@@ -504,7 +498,7 @@ public class Intel {
 		
 		// If has low cards, obtain one that allows summing to 15 else obtain a low card
 		int numLowerThan5;
-		for (numLowerThan5 = 0; numLowerThan5 < 4; numLowerThan5 ++){
+		for (numLowerThan5 = 0; numLowerThan5 < sortedVals.length; numLowerThan5 ++){
 			if (sortedVals[numLowerThan5] >= 5)
 				break;
 		}
@@ -535,7 +529,7 @@ public class Intel {
 	}
 
 	public static void main(String[] args){
-		Intel intel = new Intel();
+	 /*Intel intel = new Intel();
 		Hand hand = new Hand(); Hand discards = new Hand();
 		Stack<Card> deck = new Stack<Card>();
 		
@@ -549,19 +543,30 @@ public class Intel {
 		}
 		
 		hand.getCards().clear();
-		hand.add(new Card(8, 0));
-		hand.add(new Card(7, 1));
-		hand.add(new Card(13, 3));
-		hand.add(new Card(13, 0));
-		hand.add(new Card(5, 1));
-		hand.add(new Card(5, 2));
+		hand.add(new Card(12, 0));
+		hand.add(new Card(11, 1));
+		hand.add(new Card(3, 3));
+		hand.add(new Card(5, 0));
+		hand.add(new Card(9, 1));
+		hand.add(new Card(4, 0));
 		
 		
 		
 		System.out.println(hand.toString());
 		discards.getCards().addAll(intel.determineDiscard(hand, false));
-		System.out.println(discards.toString());
+		System.out.println(discards.toString());*/
 		
+		Hand hand = new Hand();
+		Intel intel = new Intel();
+		
+		hand.add(new Card(7,0));
+		hand.add(new Card(8,0));
+		hand.add(new Card(9,0));
+		hand.add(new Card(9,2));
+		hand.add(new Card(9,1));
+		
+		HandResult hr = intel.count(hand, false, null, false);
+		System.out.println(hr.getMessage());
 		
 		
 	}

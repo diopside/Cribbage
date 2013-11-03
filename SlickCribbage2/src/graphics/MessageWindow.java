@@ -7,6 +7,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import states.Cribbage;
+
 
 
 
@@ -116,17 +118,17 @@ public class MessageWindow {
 		 */
 
 		if (playerDeals){
-			g.setColor(Color.red);
+			g.setColor(Cribbage.PLAYER_COLOR);
 			g.drawString("D-Player: "+pScore, x + PSCORE_X, y + PSCORE_Y);
 
-			g.setColor(Color.blue);
+			g.setColor(Cribbage.COMPUTER_COLOR);
 			g.drawString("Computer: "+cScore, x + CSCORE_X, y + PSCORE_Y);
 		}
 		else {
-			g.setColor(Color.red);
+			g.setColor(Cribbage.PLAYER_COLOR);
 			g.drawString("Player: "+pScore, x + PSCORE_X, y + PSCORE_Y);
 
-			g.setColor(Color.blue);
+			g.setColor(Cribbage.COMPUTER_COLOR);
 			g.drawString("D-Computer: "+cScore, x + CSCORE_X, y + PSCORE_Y);
 		}
 

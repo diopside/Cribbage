@@ -728,6 +728,26 @@ public class Game extends BasicGameState{
 			pauseLength = PAUSE_DURATION;
 
 		}
+		else{
+			for (Card a: computerHand.getCards())
+				if (canPlay(a)){
+					c = a;
+					break;
+				}
+				
+				computerPlayedCards.add(c);
+				computerHand.getCards().remove(c);
+
+				int points = playCard(c);
+				if (points > 0){
+					window.addMessage("The computer scores " + points + "!", false);
+					computerScore(points);
+				}
+
+				playerWentLast = false;
+				pauseLength = PAUSE_DURATION;
+			
+		}
 
 	}
 
@@ -966,6 +986,7 @@ public class Game extends BasicGameState{
 		window.addMessage("Cut the deck to draw a card.  Low card deals in cribbage!", false); // add an inital message
 		stats = new Stats();
 		
+		escapePressed = false;
 		cribAngles = new int[4];
 		for (int i = 0; i < cribAngles.length; i ++)
 			cribAngles[i] = (int) (Math.random() * 360);
