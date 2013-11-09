@@ -65,6 +65,8 @@ public class Game extends BasicGameState{
 	private MessageWindow window;
 	private Stats stats;
 	
+	private boolean dPressed;
+	
 	public Game(int id){
 		ID = id;
 	}
@@ -311,6 +313,14 @@ public class Game extends BasicGameState{
 			pauseLength = PAUSE_DURATION;
 		}
 		
+		if (input.isKeyPressed(input.KEY_D))
+			dPressed = !dPressed;
+		/*if (dPressed)
+			displayComputerHand = true;
+		else
+			displayComputerHand = false;*/
+		
+		
 		
 		window.setCScore(computerScore);
 		window.setPScore(playerScore);
@@ -470,6 +480,14 @@ public class Game extends BasicGameState{
 	private void discardToCrib(Input input){
 		if (computerHand.size() == 6 && System.currentTimeMillis() - enterStateTime > 1000) computerDiscard();
 		
+		if (input.isKeyPressed(input.KEY_Z) && playerHand.size() == 6){
+			
+			Hand tempHand = new Hand();
+			tempHand.getCards().addAll(playerHand.getCards());
+			ArrayList<Card> discards = ai.determineDiscard(tempHand, playerDeals);
+			window.addMessage("The computer recommends you discard the " + discards.get(0).toString() +" and the "+ discards.get(1).toString(), false);
+		}
+		
 		
 		int index = -1;
 		if (playerHand.size() == 6){
@@ -561,6 +579,15 @@ public class Game extends BasicGameState{
 		
 		if (count == 31){
 			startNewPeggingRound();
+		}
+		
+		if (input.isKeyPressed(input.KEY_Z) && playerHand.size() > 0){
+			Hand tempHand = new Hand();
+			tempHand.getCards().addAll(playerHand.getCards());
+			
+			int index = ai.getPeggingIndex(tempHand, peggingStack, count);
+			window.addMessage("The computer suggests you play a "+ playerHand.getCard(index), false);
+			
 		}
 		
 		if (playerHand.size() == 4 && computerHand.size() == 4) // determine who plays the first card

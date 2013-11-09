@@ -93,6 +93,10 @@ public class Intel {
 			}
 			runPoints = runLength;
 		}
+		
+		if (runPoints > 2 && numPairs == 3){
+			runMult = 3;
+		}
 		 
 		// end runs
 		
@@ -339,9 +343,9 @@ public class Intel {
 		
 		
 		if (isDealer) // add the net value added from the cards being discarded
-			eV +=  expectedDiscardVal(cards.get(0).value(), cards.get(1).value()) - AVERAGE_POINTS;
+			eV += .66* (expectedDiscardVal(cards.get(0).value(), cards.get(1).value()) - AVERAGE_POINTS);
 		else
-			eV -=  expectedDiscardVal(cards.get(0).value(), cards.get(1).value()) - AVERAGE_POINTS;
+			eV -= .66 * (expectedDiscardVal(cards.get(0).value(), cards.get(1).value()) - AVERAGE_POINTS);
 		
 		
 		for (Card card: deck){
@@ -491,27 +495,28 @@ public class Intel {
 		/*
 		 * Ways to improve, favor playing a card you have a pair of if no low card, or addition of trapping 31
 		 */
-		int value;
+		int value = 0;
 		int[] values = getValueArray(cards);
-		int[] sortedVals = values.clone();
-		Arrays.sort(sortedVals);
+		
 		
 		// If has low cards, obtain one that allows summing to 15 else obtain a low card
-		int numLowerThan5;
-		for (numLowerThan5 = 0; numLowerThan5 < sortedVals.length; numLowerThan5 ++){
-			if (sortedVals[numLowerThan5] >= 5)
-				break;
-		}
+		ArrayList<Integer> indices = new ArrayList<Integer>();
+		for (int i = 0; i < values.length; i ++)
+			if (values[i] < 5)
+				indices.add(i);
 		
-		if (numLowerThan5 > 1){ // low card to make 15
-			for (int i = 0; i < numLowerThan5 -1; i ++)
-				for (int j = i + 1; j < numLowerThan5; j ++){
-					if (sortedVals[j] + sortedVals[i] + 10 == 15)
-						value = sortedVals[i];
-				}
+		if (indices.size() > 1){
+			for (int i = 0; i < indices.size() - 1; i ++){
+				for (int j = i + 1; j < indices.size(); j ++)
+					if (values[indices.get(i)] + values[indices.get(j)] + 10 == 15){
+						return indices.get(i);
+					}
+			}
 		}
-		else if (numLowerThan5 == 1)
-			value = sortedVals[0];
+		if (indices.size() == 1)
+			return indices.get(0);
+		
+		
 		// end obtain low card block
 		
 		
@@ -524,12 +529,12 @@ public class Intel {
 		else if (has(12, values))	return valueIndex(12, cards);
 		else if (has(10, values))	return valueIndex(10, cards);
 		else if (has(11, values))	return valueIndex(11, cards);
-		else 					return 0;
+		else 					return value;
 		
 	}
 
 	public static void main(String[] args){
-	 /*Intel intel = new Intel();
+		Intel intel = new Intel();
 		Hand hand = new Hand(); Hand discards = new Hand();
 		Stack<Card> deck = new Stack<Card>();
 		
@@ -554,20 +559,7 @@ public class Intel {
 		
 		System.out.println(hand.toString());
 		discards.getCards().addAll(intel.determineDiscard(hand, false));
-		System.out.println(discards.toString());*/
-		
-		Hand hand = new Hand();
-		Intel intel = new Intel();
-		
-		hand.add(new Card(7,0));
-		hand.add(new Card(8,0));
-		hand.add(new Card(9,0));
-		hand.add(new Card(9,2));
-		hand.add(new Card(9,1));
-		
-		HandResult hr = intel.count(hand, false, null, false);
-		System.out.println(hr.getMessage());
-		
+		System.out.println(discards.toString());
 		
 	}
 
